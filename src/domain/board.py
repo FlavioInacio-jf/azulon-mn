@@ -35,3 +35,11 @@ class Board:
         piece = self.grid[r1][c1]
         self.grid[r2][c2] = piece
         self.grid[r1][c1] = None
+
+    def pieces(self):
+        """Iterates over board pieces with coordinates."""
+        for r in range(self.size):
+            for c in range(self.size):
+                piece = self.grid[r][c]
+                if piece:
+                    yield r, c, piece

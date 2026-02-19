@@ -2,6 +2,7 @@ import tkinter as tk
 
 from src.game.board_renderer import BoardRenderer
 from src.domain.game import Game
+from src.theme.theme_manager import ThemeManager
 
 class GameRenderer:
     """Manages the main game window, rendering the board and handling user interactions."""
@@ -10,6 +11,7 @@ class GameRenderer:
         self.root = root
         self.game = game
         self.square_size = square_size
+        self.theme = ThemeManager()
 
         self.canvas = tk.Canvas(
             root,
@@ -18,7 +20,7 @@ class GameRenderer:
         )
         self.canvas.pack()
 
-        self.board_renderer = BoardRenderer(self.canvas, square_size)
+        self.board_renderer = BoardRenderer(self.canvas, square_size, self.theme)
         self.canvas.bind("<Button-1>", self.on_click)
 
         self._setup_window()
