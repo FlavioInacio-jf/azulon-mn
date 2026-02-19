@@ -1,12 +1,10 @@
 import tkinter as tk
-from dataclasses import dataclass
 
 from src.domain.element import Element
 from src.domain.theme import COLORS, Color
 
 
-@dataclass
-class Piece:
+class PieceRenderer:
     """Draws elemental pieces on the game board based on their type and color."""
 
     def __init__(self, canvas: tk.Canvas, square_size: int):
@@ -15,9 +13,6 @@ class Piece:
 
     def draw(self, row: int, col: int, element: Element):
         """Draws a piece on the canvas based on its element type."""
-        if element == Element.EMPTY:
-            return
-
         element_id = f"piece_{row}_{col}"
         self.canvas.delete(element_id)
 
