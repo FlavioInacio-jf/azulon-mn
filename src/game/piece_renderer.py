@@ -2,6 +2,7 @@ import tkinter as tk
 
 from src.domain.element import Element
 from src.domain.team import Team
+from src.game.svg_loader import SvgLoader
 from src.theme.theme_manager import ThemeManager
 
 
@@ -9,9 +10,14 @@ class PieceRenderer:
     """Draws elemental pieces on the game board based on their type and color."""
 
     def __init__(self, canvas: tk.Canvas, square_size: int, theme: ThemeManager):
+        self.assets_path = "assets/svg"
         self.canvas = canvas
         self.square_size = square_size
         self.theme = theme
+
+        self.svg = SvgLoader()
+        # Keep references to images so Tkinter does not garbage collect
+        self._images: dict[str, tk.PhotoImage] = {}
 
     def draw(self, row: int, col: int, element: Element, team: Team):
         """Draws a piece on the canvas based on its element type."""
@@ -26,20 +32,16 @@ class PieceRenderer:
             x - radius - 5, y - radius - 5,
             x + radius + 5, y + radius + 5,
             fill=self.theme.get_team_theme().get(team),
-            stipple="gray50",
-            outline="white",
+            outline=self.theme.get_team_theme().get(team),
             width=1,
             tags=element_id
         )
 
-        if element == Element.FIRE:
-            self._draw_fire(x, y, radius)
-        elif element == Element.WATER:
-            self._draw_water(x, y, radius)
-        elif element == Element.EARTH:
-            self._draw_earth(x, y, radius)
-        elif element == Element.AIR:
-            self._draw_air(x, y, radius)
+        size = int(self.square_size * 0.8)
+
+        path = self._get_svg_path(element)
+        img = self.svg.load(path, size)
+        self.canvas.create_image(x, y, image=img)
 
     def _draw_fire(self, x: int, y: int, radius: int):
         """Draws a flame-shaped piece for the fire element."""
@@ -91,3 +93,14 @@ class PieceRenderer:
             outline=self.theme.get_piece_theme().AIR,
             width=2
         )
+
+    def _get_svg_path(self, element)-> str:
+        """Returns the file path for the SVG corresponding to the given element."""
+        mapping = {
+            Element.FIRE: "fire.svg",
+            Element.WATER: "water.svg",
+            Element.EARTH: "earth.svg",
+            Element.AIR: "air.svg",
+        }
+
+        return f"{self.assets_path}/{mapping.get(element, 'default.svg')}"

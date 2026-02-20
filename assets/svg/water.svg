@@ -1,0 +1,9 @@
+<svg width="200" height="200" viewBox="0 0 200 200" xmlns="http://www.w3.org/2000/svg">
+  <defs>
+    <linearGradient id="waterGrad" x1="0%" y1="0%" x2="100%" y2="100%">
+      <stop offset="0%" style="stop-color:#00d2ff;stop-opacity:1" />
+      <stop offset="100%" style="stop-color:#3a7bd5;stop-opacity:1" />
+    </linearGradient>
+  </defs>
+  <path d="M 100,40 C 140,40 160,70 160,100 C 160,140 130,160 100,160 C 70,160 40,140 40,100 C 40,80 60,70 80,80 C 90,85 100,80 100,60 Z" fill="url(#waterGrad)" />
+</svg>
