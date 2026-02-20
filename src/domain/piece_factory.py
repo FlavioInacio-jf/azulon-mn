@@ -9,8 +9,12 @@ class PieceFactory:
 
     @classmethod
     def create_team_set(cls, team: Team) -> list[Piece]:
-        """Creates a set of pieces for a given team,
-        including base elements and random duplicates."""
-        random_elements = random.choices(cls.BASE_ELEMENTS, k=2)
-        elements = cls.BASE_ELEMENTS + random_elements
-        return [Piece(el, team) for el in elements]
+        """Creates a set of pieces for a given team, including base and extra pieces."""
+        base_pieces = [Piece(el, team) for el in cls.BASE_ELEMENTS]
+
+        # Generate 2 extra pieces with random elements for the team
+        extra_elements = random.choices(cls.BASE_ELEMENTS, k=2)
+        extra_pieces = [Piece(el, team) for el in extra_elements]
+        all_pieces = extra_pieces + base_pieces
+
+        return all_pieces

@@ -51,29 +51,44 @@ class Game:
         self.switch_turn()
 
     def get_valid_moves(self, row: int, col: int) -> List[Move]:
-        """Returns a list of valid moves for the piece at the given position."""
+        """Returns a list of valid moves for the piece at (row, col)."""
         piece = self._board.get_piece(row, col)
-        if piece.is_empty or piece.team != self._current_turn:
+        if piece.is_empty or piece.team is None:
             return []
 
-        directions = [(-1, -1), (-1, 1)] if piece.team == Team.RED else [(1, -1), (1, 1)]
         valid_moves: List[Move] = []
 
-        # Movimentos simples
-        for dr, dc in directions:
-            r, c = row + dr, col + dc
-            if self._board.in_bounds(r, c) and self._board.get_piece(r, c).is_empty:
-                valid_moves.append(Move(row, col, r, c, []))
+        # Determine movement directions based on team
+        directions = [(-1, -1), (-1, 1)] if piece.team == Team.RED else [(1, -1), (1, 1)]
 
-        # Capturas
+        # Valid moves (moving to an adjacent empty square)
         for dr, dc in directions:
-            mid_r, mid_c = row + dr, col + dc
-            end_r, end_c = row + 2 * dr, col + 2 * dc
-            if self._board.in_bounds(end_r, end_c):
-                mid_piece = self._board.get_piece(mid_r, mid_c)
-                end_piece = self._board.get_piece(end_r, end_c)
-                if not mid_piece.is_empty and mid_piece.team != piece.team and end_piece.is_empty:
-                    valid_moves.append(Move(row, col, end_r, end_c, [(mid_r, mid_c)]))
+            new_row, new_col = row + dr, col + dc
+
+
+            is_valid_simple_move = (
+                self._board.in_bounds(new_row, new_col) and
+                self._board.get_piece(new_row, new_col).is_empty
+            )
+            if is_valid_simple_move:
+                valid_moves.append(Move(row, col, new_row, new_col, []))
+
+        # Capture moves (jumping over an opponent's piece)
+        for dr, dc in directions:
+            mid_row, mid_col = row + dr, col + dc
+            end_row, end_col = row + 2*dr, col + 2*dc
+            if self._board.in_bounds(end_row, end_col):
+                mid_piece = self._board.get_piece(mid_row, mid_col)
+                end_piece = self._board.get_piece(end_row, end_col)
+
+                can_capture = (
+                    not mid_piece.is_empty and
+                    mid_piece.team != piece.team and
+                    end_piece.is_empty
+                )
+
+                if can_capture:
+                    valid_moves.append(Move(row, col, end_row, end_col, [(mid_row, mid_col)]))
 
         return valid_moves
 
