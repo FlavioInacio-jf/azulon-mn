@@ -47,19 +47,20 @@ class GameRenderer:
             return
 
         if self.game.selected_row is None:
-            self.game.select_piece(row, col)
-            self.board_renderer.selected_piece(row, col)
-
-            moves = self.game.get_valid_moves(row, col)
-            self.board_renderer.set_valid_moves([(m.end_row, m.end_col) for m in moves])
+            selected = self.game.select_piece(row, col)
+            if selected:
+                self.board_renderer.selected_piece(row, col)
+                moves = self.game.get_valid_moves(row, col)
+                self.board_renderer.set_valid_moves([(m.end_row, m.end_col) for m in moves])
         else:
             move = self.game.move_selected_piece(row, col)
             if move:
                 self.board_renderer.move_piece(self.game.board, move)
 
-            # Reset selection and valid moves after an attempt to move
-            self.board_renderer.selected_piece(None, None)
-            self.board_renderer.set_valid_moves([])
+                # Reset selection and valid moves after an attempt to move
+                self.board_renderer.set_valid_moves([])
+                self.board_renderer.selected_piece(None, None)
 
         self.board_renderer.draw_board(self.game.board)
         self.board_renderer.draw_all_pieces(self.game.board)
+

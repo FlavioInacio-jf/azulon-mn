@@ -23,7 +23,7 @@ class BoardRenderer:
 
     def selected_piece(self, row: int, col: int):
         """Sets the currently selected piece's position."""
-        self._selected_piece = (row, col)
+        self._selected_piece = None if row is None or col is None else (row, col)
 
     def set_valid_moves(self, moves: list[tuple[int,int]]):
         """Sets the list of valid move positions for the currently selected piece."""
@@ -54,6 +54,7 @@ class BoardRenderer:
                 self.draw_square_number(r, c, square_number)
 
         if self._selected_piece:
+            print("self._selected_piece", self._selected_piece)
             sr, sc = self._selected_piece
             self._canvas.create_rectangle(
                 sc*self._square_size,
