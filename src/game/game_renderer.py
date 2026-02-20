@@ -41,8 +41,6 @@ class GameRenderer:
         col = event.x // self.square_size
         row = event.y // self.square_size
 
-        print(f"Clicked on row {row}, col {col}")
-
         if not self.game.board.in_bounds(row, col):
             return
 
