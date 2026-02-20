@@ -72,12 +72,14 @@ class Game:
         valid_moves = self.get_valid_moves(self._selected_row, self._selected_col)
         move = next((m for m in valid_moves if m.end_row == dest_row and m.end_col == dest_col), None)
         if move:
+            print(f"Applying move: {move}")  # Debug statement to trace move application
             self.apply_move(move)
             if move.captured and self.has_additional_capture(move.end_row, move.end_col):
                 self._selected_row, self._selected_col = move.end_row, move.end_col
             else:
                 self._selected_row = None
                 self._selected_col = None
+
                 self.switch_turn()
             return move
 
@@ -91,7 +93,6 @@ class Game:
         if piece.is_empty:
             return
 
-        self._board.set_piece(move.end_row, move.end_col, piece)
         self._board.remove_piece(move.start_row, move.start_col)
 
         for r, c in move.captured:
@@ -99,13 +100,16 @@ class Game:
             self._scores[piece.team] += captured_piece.weight
             self._board.remove_piece(r, c)
 
+        self._board.set_piece(move.end_row, move.end_col, piece)
+
     def get_valid_moves(self, row: int, col: int) -> List[Move]:
-        """Returns a list of valid moves for the piece at the given location."""
+        """Returns valid moves for a piece (simple moves + single captures)."""
         piece = self._board.get_piece(row, col)
         if piece.is_empty or piece.team is None:
             return []
 
         moves: List[Move] = []
+
         directions = [(-1, -1), (-1, 1)] if piece.team == Team.RED else [(1, -1), (1, 1)]
 
         for dr, dc in directions:
@@ -113,17 +117,19 @@ class Game:
             if self._board.in_bounds(nr, nc) and self._board.get_piece(nr, nc).is_empty:
                 moves.append(Move(row, col, nr, nc, []))
 
-        moves.extend(self._get_capture_moves(row, col))
+        capture_moves = self._get_capture_moves(row, col)
 
+        if capture_moves:
+            return capture_moves
+
+        moves.extend(capture_moves)
         return moves
 
-    def _get_capture_moves(self, row: int, col: int, visited=None) -> List[Move]:
-        """Recursively finds all valid capture moves for the piece at the given location."""
-        if visited is None:
-            visited = set()
-
+    def _get_capture_moves(self, row: int, col: int) -> List[Move]:
+        """Returns only single-step capture moves (no recursion)."""
         piece = self._board.get_piece(row, col)
         moves: List[Move] = []
+
         directions = [(-1, -1), (-1, 1), (1, -1), (1, 1)]
 
         for dr, dc in directions:
@@ -136,21 +142,16 @@ class Game:
             mid_piece = self._board.get_piece(mid_row, mid_col)
             end_piece = self._board.get_piece(end_row, end_col)
 
-            if mid_piece.is_empty or mid_piece.team == piece.team or not end_piece.is_empty:
+            if mid_piece.is_empty:
                 continue
 
-            if (mid_row, mid_col, end_row, end_col) in visited:
+            if mid_piece.team == piece.team:
                 continue
 
-            new_visited = visited | {(mid_row, mid_col, end_row, end_col)}
-            move = Move(row, col, end_row, end_col, [(mid_row, mid_col)])
+            if not end_piece.is_empty:
+                continue
 
-            subsequent = self._get_capture_moves(end_row, end_col, new_visited)
-            if subsequent:
-                for sub in subsequent:
-                    moves.append(Move(row, col, sub.end_row, sub.end_col, move.captured + sub.captured))
-            else:
-                moves.append(move)
+            moves.append(Move(row, col, end_row, end_col, [(mid_row, mid_col)]))
 
         return moves
 
