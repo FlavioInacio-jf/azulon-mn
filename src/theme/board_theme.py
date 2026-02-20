@@ -12,7 +12,7 @@ class BoardTheme:
     palette = {
         BoardColor.LIGHT: "#e6d3a3",
         BoardColor.DARK: "#8b6f47",
-        BoardColor.HIGHLIGHT: "#f4e4a1",
+        BoardColor.HIGHLIGHT: "#d4c68f",
     }
 
     def get(self, color: BoardColor) -> str:

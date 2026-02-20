@@ -4,7 +4,9 @@ from src.domain.move import Move
 from src.domain.team import Team
 
 class Game:
+    """Manages the overall game state, including the board, current turn, and scores."""
     def __init__(self, board: Board):
+        """Manages the overall game state, including the board, current turn, and scores."""
         self._board = board
         self._current_turn: Team = Team.RED
         self._scores: Dict[Team, int] = {Team.RED: 0, Team.BLUE: 0}
@@ -12,6 +14,7 @@ class Game:
         self.selected_col: Optional[int] = None
 
     def initialize(self) -> None:
+        """Initializes the game state, setting up the board and resetting scores."""
         self._board.initialize()
         self._scores = {Team.RED: 0, Team.BLUE: 0}
         self.selected_row = None
@@ -20,20 +23,25 @@ class Game:
 
     @property
     def board(self) -> Board:
+        """Returns the current state of the game board."""
         return self._board
 
     @property
     def current_turn(self) -> Team:
+        """Returns the team whose turn it currently is."""
         return self._current_turn
 
     @property
     def scores(self) -> Dict[Team, int]:
+        """Returns the current scores for both teams."""
         return self._scores
 
     def switch_turn(self) -> None:
+        """Switches the current player's turn."""
         self._current_turn = Team.RED if self._current_turn == Team.BLUE else Team.BLUE
 
     def select_piece(self, row: int, col: int) -> bool:
+        """Selects a piece at the given location if it belongs to the current player. Returns True if selection is successful."""
         piece = self._board.get_piece(row, col)
         if piece.is_empty or piece.team != self._current_turn:
             return False
@@ -42,6 +50,7 @@ class Game:
         return True
 
     def move_selected_piece(self, dest_row: int, dest_col: int) -> Optional[Move]:
+        """Attempts to move the selected piece to the specified destination. Returns the Move if successful, or None if invalid."""
         if self.selected_row is None or self.selected_col is None:
             return None
 
@@ -62,6 +71,7 @@ class Game:
         return None
 
     def apply_move(self, move: Move) -> None:
+        """Applies the given move to the board, updating piece positions and scores."""
         piece = self._board.get_piece(move.start_row, move.start_col)
         if piece.is_empty:
             return
@@ -75,6 +85,7 @@ class Game:
             self._board.remove_piece(r, c)
 
     def get_valid_moves(self, row: int, col: int) -> List[Move]:
+        """Returns a list of valid moves for the piece at the given location."""
         piece = self._board.get_piece(row, col)
         if piece.is_empty or piece.team is None:
             return []
@@ -92,6 +103,7 @@ class Game:
         return moves
 
     def _get_capture_moves(self, row: int, col: int, visited=None) -> List[Move]:
+        """Recursively finds all valid capture moves for the piece at the given location."""
         if visited is None:
             visited = set()
 
@@ -128,4 +140,5 @@ class Game:
         return moves
 
     def has_additional_capture(self, row: int, col: int) -> bool:
+        """Checks if the piece at the given location has any valid capture moves."""
         return any(m.captured for m in self.get_valid_moves(row, col))
