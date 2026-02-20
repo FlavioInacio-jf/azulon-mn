@@ -120,7 +120,7 @@ class BoardRenderer:
         self._piece_renderer.animate_move(piece, move.start_row, move.start_col,
                                          move.end_row, move.end_col)
 
-        # Remove captured pieces --- IGNORE ---
+        # Remove captured pieces
         for r, c in move.captured:
             board.set_piece(r, c, Piece(piece.element, Team.NONE))
             self._piece_renderer.delete(r, c)

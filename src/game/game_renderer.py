@@ -62,6 +62,7 @@ class GameRenderer:
         else:
             move = self.game.move_selected_piece(row, col)
             if move:
+                print(move)
                 self.board_renderer.move_piece(self.game.board, move)
 
                 # Reset selection and valid moves after an attempt to move
