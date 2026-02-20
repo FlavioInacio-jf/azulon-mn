@@ -15,16 +15,19 @@ class GameRenderer:
 
         self.canvas = tk.Canvas(
             root,
-            width=game.board.size * square_size,
-            height=game.board.size * square_size
+            width=game.board.get_size() * square_size,
+            height=game.board.get_size() * square_size
         )
         self.canvas.pack()
 
         self.board_renderer = BoardRenderer(self.canvas, square_size, self.theme)
         self.canvas.bind("<Button-1>", self.on_click)
 
+    def initialize(self):
+        """Initializes the game state and redraws the board."""
+        self.game.initialize()
         self._setup_window()
-        self.draw()
+        self._draw()
 
     def _setup_window(self):
         """Configures the main window size and title."""
@@ -32,7 +35,7 @@ class GameRenderer:
         self.root.geometry(f"{size}x{size}")
         self.root.title("AZULON")
 
-    def draw(self):
+    def _draw(self):
         """Draws the current game state on the canvas."""
         self.board_renderer.draw(self.game.board)
 
@@ -42,4 +45,4 @@ class GameRenderer:
         row = event.y // self.square_size
 
         self.game.click(row, col)
-        self.draw()
+        self._draw()

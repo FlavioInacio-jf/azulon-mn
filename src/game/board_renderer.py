@@ -2,7 +2,6 @@
 import tkinter as tk
 
 from src.domain.board import Board
-from src.domain.team import Team
 from src.game.piece_renderer import PieceRenderer
 from src.theme.board_theme import BoardColor
 from src.theme.theme_manager import ThemeManager
