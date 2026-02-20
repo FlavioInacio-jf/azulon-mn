@@ -62,7 +62,6 @@ class GameRenderer:
         else:
             move = self._game.move_selected_piece(row, col)
             if move:
-                print(move)
                 self.board_renderer.move_piece(self._game.board, move)
 
                 # Reset selection and valid moves after an attempt to move
@@ -75,7 +74,7 @@ class GameRenderer:
         """Draws the current scores for both teams on the canvas."""
         self._canvas.delete("score")
 
-        scores = self._game.scores
+        scores = self._game.scores()
         red_score = scores.get(Team.RED, 0)
         blue_score = scores.get(Team.BLUE, 0)
 
@@ -102,8 +101,32 @@ class GameRenderer:
             tags="score"
         )
 
+    def _show_game_over(self, winner: Team):
+        """Displays a game over message indicating the winning team."""
+        self._canvas.create_rectangle(
+            0, 0,
+            self._square_size * self._game.board.size,
+            self._square_size * self._game.board.size,
+            fill="black",
+            stipple="gray50",
+            tags="gameover"
+        )
+
+        self._canvas.create_text(
+            self._square_size * self._game.board.size // 2,
+            self._square_size * self._game.board.size // 2,
+            text=f"{winner.name} WINS",
+            fill="white",
+            font=("Arial", 32, "bold"),
+            tags="gameover"
+        )
+
     def _redraw_all(self):
         """Helper to refresh the UI."""
         self.board_renderer.draw_board(self._game.board)
         self.board_renderer.draw_all_pieces(self._game.board)
         self.draw_scores()
+
+        winner = self._game.get_winner()
+        if winner:
+            self._show_game_over(winner)

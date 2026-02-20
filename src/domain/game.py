@@ -41,12 +41,10 @@ class Game:
         self._selected_row = None
         self._selected_col = None
 
-    @property
     def current_turn(self) -> Team:
         """Returns the team whose turn it currently is."""
         return self._current_turn
 
-    @property
     def scores(self) -> Dict[Team, int]:
         """Returns the current scores for both teams."""
         return self._scores
@@ -72,9 +70,8 @@ class Game:
         valid_moves = self.get_valid_moves(self._selected_row, self._selected_col)
         move = next((m for m in valid_moves if m.end_row == dest_row and m.end_col == dest_col), None)
         if move:
-            print(f"Applying move: {move}")  # Debug statement to trace move application
-            self.apply_move(move)
-            if move.captured and self.has_additional_capture(move.end_row, move.end_col):
+            self._apply_move(move)
+            if move.captured and self._has_additional_capture(move.end_row, move.end_col):
                 self._selected_row, self._selected_col = move.end_row, move.end_col
             else:
                 self._selected_row = None
@@ -87,20 +84,16 @@ class Game:
         self._selected_col = None
         return None
 
-    def apply_move(self, move: Move) -> None:
-        """Applies the given move to the board, updating piece positions and scores."""
-        piece = self._board.get_piece(move.start_row, move.start_col)
-        if piece.is_empty:
-            return
 
-        self._board.remove_piece(move.start_row, move.start_col)
+    def is_game_over(self) -> bool:
+        """Checks if the game is over, which occurs when one team has no pieces left."""
+        if self._has_team_no_pieces():
+            return True
 
-        for r, c in move.captured:
-            captured_piece = self._board.get_piece(r, c)
-            self._scores[piece.team] += captured_piece.weight
-            self._board.remove_piece(r, c)
+        if not self.has_any_valid_move(self._current_turn):
+            return True
 
-        self._board.set_piece(move.end_row, move.end_col, piece)
+        return False
 
     def get_valid_moves(self, row: int, col: int) -> List[Move]:
         """Returns valid moves for a piece (simple moves + single captures)."""
@@ -124,6 +117,36 @@ class Game:
 
         moves.extend(capture_moves)
         return moves
+
+    def get_winner(self) -> Optional[Team]:
+        """Determines the winner of the game based on scores if one team has no pieces left."""
+        if not self._has_team_no_pieces():
+            return None
+
+        red_score = self._scores.get(Team.RED, 0)
+        blue_score = self._scores.get(Team.BLUE, 0)
+
+        if red_score > blue_score:
+            return Team.RED
+        if blue_score > red_score:
+            return Team.BLUE
+
+        return None
+
+    def _apply_move(self, move: Move) -> None:
+        """Applies the given move to the board, updating piece positions and scores."""
+        piece = self._board.get_piece(move.start_row, move.start_col)
+        if piece.is_empty:
+            return
+
+        self._board.remove_piece(move.start_row, move.start_col)
+
+        for r, c in move.captured:
+            captured_piece = self._board.get_piece(r, c)
+            self._scores[piece.team] += captured_piece.weight
+            self._board.remove_piece(r, c)
+
+        self._board.set_piece(move.end_row, move.end_col, piece)
 
     def _get_capture_moves(self, row: int, col: int) -> List[Move]:
         """Returns only single-step capture moves (no recursion)."""
@@ -155,6 +178,41 @@ class Game:
 
         return moves
 
-    def has_additional_capture(self, row: int, col: int) -> bool:
+    def _has_additional_capture(self, row: int, col: int) -> bool:
         """Checks if the piece at the given location has any valid capture moves."""
         return any(m.captured for m in self.get_valid_moves(row, col))
+
+    def has_any_valid_move(self, team: Team) -> bool:
+        """Checks if a team has at least one valid move."""
+        for r in range(self._board.size):
+            for c in range(self._board.size):
+                piece = self._board.get_piece(r, c)
+
+                if piece.is_empty or piece.team != team:
+                    continue
+
+                if len(self.get_valid_moves(r, c)) > 0:
+                    return True
+
+        return False
+
+    def _has_team_no_pieces(self) -> bool:
+        """Checks if either team has no pieces left on the board."""
+        red = 0
+        blue = 0
+
+        for r in range(self._board.size):
+            for c in range(self._board.size):
+                piece = self._board.get_piece(r, c)
+                if piece.is_empty:
+                    continue
+
+                if piece.team == Team.RED:
+                    red += 1
+                else:
+                    blue += 1
+
+        return red == 0 or blue == 0
+
+
+
