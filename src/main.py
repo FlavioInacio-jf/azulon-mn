@@ -4,7 +4,6 @@ import tkinter as tk
 
 from src.domain.board import Board
 from src.domain.game import Game
-from src.game.board_renderer import BoardRenderer
 from src.game.game_renderer import GameRenderer
 
 if __name__ == "__main__":
