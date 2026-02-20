@@ -10,21 +10,36 @@ class Game:
         self._board = board
         self._current_turn: Team = Team.RED
         self._scores: Dict[Team, int] = {Team.RED: 0, Team.BLUE: 0}
-        self.selected_row: Optional[int] = None
-        self.selected_col: Optional[int] = None
+        self._selected_row: Optional[int] = None
+        self._selected_col: Optional[int] = None
 
     def initialize(self) -> None:
         """Initializes the game state, setting up the board and resetting scores."""
         self._board.initialize()
         self._scores = {Team.RED: 0, Team.BLUE: 0}
-        self.selected_row = None
-        self.selected_col = None
+        self._selected_row = None
+        self._selected_col = None
         self._current_turn = Team.RED
 
     @property
     def board(self) -> Board:
         """Returns the current state of the game board."""
         return self._board
+
+    def selected_piece(self) -> Optional[tuple[int, int]]:
+        """Returns the position of the currently selected piece, or None if no piece is selected."""
+        if self._selected_row is not None and self._selected_col is not None:
+            return (self._selected_row, self._selected_col)
+        return None
+
+    def is_same_selected_piece(self, row: int, col: int) -> bool:
+        """Checks if the given position is the same as the currently selected piece."""
+        return self.selected_piece() == (row, col)
+
+    def clear_selection(self) -> None:
+        """Clears the currently selected piece."""
+        self._selected_row = None
+        self._selected_col = None
 
     @property
     def current_turn(self) -> Team:
@@ -45,29 +60,29 @@ class Game:
         piece = self._board.get_piece(row, col)
         if piece.is_empty or piece.team != self._current_turn:
             return False
-        self.selected_row = row
-        self.selected_col = col
+        self._selected_row = row
+        self._selected_col = col
         return True
 
     def move_selected_piece(self, dest_row: int, dest_col: int) -> Optional[Move]:
         """Attempts to move the selected piece to the specified destination. Returns the Move if successful, or None if invalid."""
-        if self.selected_row is None or self.selected_col is None:
+        if self._selected_row is None or self._selected_col is None:
             return None
 
-        valid_moves = self.get_valid_moves(self.selected_row, self.selected_col)
+        valid_moves = self.get_valid_moves(self._selected_row, self._selected_col)
         move = next((m for m in valid_moves if m.end_row == dest_row and m.end_col == dest_col), None)
         if move:
             self.apply_move(move)
             if move.captured and self.has_additional_capture(move.end_row, move.end_col):
-                self.selected_row, self.selected_col = move.end_row, move.end_col
+                self._selected_row, self._selected_col = move.end_row, move.end_col
             else:
-                self.selected_row = None
-                self.selected_col = None
+                self._selected_row = None
+                self._selected_col = None
                 self.switch_turn()
             return move
 
-        self.selected_row = None
-        self.selected_col = None
+        self._selected_row = None
+        self._selected_col = None
         return None
 
     def apply_move(self, move: Move) -> None:

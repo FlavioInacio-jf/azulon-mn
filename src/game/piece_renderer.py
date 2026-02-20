@@ -61,3 +61,8 @@ class PieceRenderer:
     def _get_element_id(self, row: int, col: int) -> str:
         """Generates a unique canvas tag for a piece based on its board position."""
         return f"piece_{row}_{col}"
+
+    def delete(self, row: int, col: int):
+        """Deletes a piece from the canvas."""
+        element_id = self._get_element_id(row, col)
+        self.canvas.delete(element_id)

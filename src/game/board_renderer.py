@@ -123,7 +123,7 @@ class BoardRenderer:
         # Remove captured pieces --- IGNORE ---
         for r, c in move.captured:
             board.set_piece(r, c, Piece(piece.element, Team.NONE))
-            self._canvas.delete(f"piece_{r}_{c}")
+            self._piece_renderer.delete(r, c)
 
     def square_size(self) -> int:
         """Returns the size of each square on the board."""

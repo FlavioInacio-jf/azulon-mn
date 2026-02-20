@@ -46,7 +46,16 @@ class GameRenderer:
         if not self.game.board.in_bounds(row, col):
             return
 
-        if self.game.selected_row is None:
+        # Clear selection if clicking the same piece again
+        if self.game.is_same_selected_piece(row, col):
+            self.game.clear_selection()
+            self.board_renderer.set_valid_moves([])
+            self.board_renderer.selected_piece(None, None)
+
+            self._redraw_all()
+            return
+
+        if self.game.selected_piece() is None:
             selected = self.game.select_piece(row, col)
             if selected:
                 self.board_renderer.selected_piece(row, col)
@@ -61,6 +70,9 @@ class GameRenderer:
                 self.board_renderer.set_valid_moves([])
                 self.board_renderer.selected_piece(None, None)
 
+        self._redraw_all()
+
+    def _redraw_all(self):
+        """Helper to refresh the UI."""
         self.board_renderer.draw_board(self.game.board)
         self.board_renderer.draw_all_pieces(self.game.board)
-
