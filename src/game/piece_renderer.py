@@ -104,3 +104,45 @@ class PieceRenderer:
         }
 
         return f"{self.assets_path}/{mapping.get(element, 'default.svg')}"
+
+    def move_piece(self, piece, start_row: int, start_col: int, end_row: int, end_col: int, steps: int = 10, delay: float = 0.02):
+        """Animates a piece moving from its starting position to its destination."""
+        element = piece.element
+        team = piece.team
+
+        start_x = start_col * self.square_size + self.square_size // 2
+        start_y = start_row * self.square_size + self.square_size // 2
+        end_x = end_col * self.square_size + self.square_size // 2
+        end_y = end_row * self.square_size + self.square_size // 2
+
+        dx = (end_x - start_x) / steps
+        dy = (end_y - start_y) / steps
+
+        element_id = f"piece_move"
+        radius = self.square_size // 2 - 15
+        self.canvas.delete(element_id)
+        oval = self.canvas.create_oval(
+            start_x - radius, start_y - radius,
+            start_x + radius, start_y + radius,
+            fill=self.theme.get_team_theme().get(team),
+            outline=self.theme.get_team_theme().get(team),
+            width=1,
+            tags=element_id
+        )
+
+        # Carrega SVG
+        size = int(self.square_size * 0.8)
+        path = self._get_svg_path(element)
+        img = self.svg.load(path, size)
+        img_id = self.canvas.create_image(start_x, start_y, image=img, tags=element_id)
+        self._images[element_id] = img
+
+        # Animação
+        for _ in range(steps):
+            self.canvas.move(element_id, dx, dy)
+            self.canvas.update()
+            self.canvas.after(int(delay*1000))  # usa after no lugar de time.sleep
+
+        # Remove antigo e redesenha na posição final
+        self.canvas.delete(element_id)
+        self.draw(end_row, end_col, element, team)
