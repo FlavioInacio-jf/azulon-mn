@@ -27,7 +27,8 @@ class GameRenderer:
         """Initializes the game state and redraws the board."""
         self.game.initialize()
         self._setup_window()
-        self._draw()
+        self.board_renderer.draw_board(self.game.board)
+        self.board_renderer.draw_all_pieces(self.game.board)
 
     def _setup_window(self):
         """Configures the main window size and title."""
@@ -35,14 +36,20 @@ class GameRenderer:
         self.root.geometry(f"{size}x{size}")
         self.root.title("AZULON")
 
-    def _draw(self):
-        """Draws the current game state on the canvas."""
-        self.board_renderer.draw(self.game.board)
-
     def on_click(self, event):
-        """Handles click events on the canvas, translating them to game logic."""
+        """Handles user clicks to select and move pieces."""
         col = event.x // self.square_size
         row = event.y // self.square_size
 
-        self.game.click(row, col)
-        self._draw()
+        if not self.game.board.in_bounds(row, col):
+            return
+
+        if self.game.selected_row is None:
+            self.game.select_piece(row, col)
+        else:
+            move = self.game.move_selected_piece(row, col)
+            if move:
+                self.board_renderer.move_piece(self.game.board, move)
+
+        self.board_renderer.draw_board(self.game.board)
+        self.board_renderer.draw_all_pieces(self.game.board)

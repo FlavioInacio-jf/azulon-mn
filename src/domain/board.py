@@ -8,8 +8,8 @@ class Board:
     """Represents the logical game board state."""
     def __init__(self, size: int = 6):
         self.size = size
-        self.grid: list[list[Piece | None]] = [
-            [None] * size for _ in range(size)
+        self.grid: list[list[Piece]] = [
+            [Piece(Element.EMPTY, Team.NONE) for _ in range(size)] for _ in range(size)
         ]
 
     def initialize(self):
@@ -27,16 +27,18 @@ class Board:
         for (r, c), piece in zip(pos_red, red):
             self.grid[r][c] = piece
 
-    def place_piece(self, row: int, col: int, piece: Piece):
-        """Places a piece on the board at the specified location."""
+    def set_piece(self, row: int, col: int, piece: Piece):
+        """Sets the piece at the specified location."""
         self.grid[row][col] = piece
 
     def remove_piece(self, row: int, col: int):
         """Removes a piece from the board, setting it to empty."""
-        self.grid[row][col] = Piece(Element.EMPTY, None)
+        self.grid[row][col] = Piece(Element.EMPTY, Team.NONE)
 
     def get_piece(self, row: int, col: int) -> Piece:
         """Returns the piece at the specified location."""
+        if not self.in_bounds(row, col):
+            return Piece(Element.EMPTY, Team.NONE)
         return self.grid[row][col]
 
     def get_size(self) -> int:
