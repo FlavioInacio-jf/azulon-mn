@@ -54,7 +54,6 @@ class BoardRenderer:
                 self.draw_square_number(r, c, square_number)
 
         if self._selected_piece:
-            print("self._selected_piece", self._selected_piece)
             sr, sc = self._selected_piece
             self._canvas.create_rectangle(
                 sc*self._square_size,
