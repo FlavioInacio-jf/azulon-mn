@@ -1,3 +1,5 @@
+import copy
+
 from src.domain.element import Element
 from src.domain.piece import Piece
 from src.domain.piece_factory import PieceFactory
@@ -48,3 +50,9 @@ class Board:
     def in_bounds(self, row: int, col: int) -> bool:
         """Checks if the given position is within the bounds of the board."""
         return 0 <= row < self.size and 0 <= col < self.size
+
+    def clone(self) -> "Board":
+        """Creates a deep copy of the board state for use in simulations."""
+        new_board = Board(self.size)
+        new_board.grid = copy.deepcopy(self.grid)
+        return new_board

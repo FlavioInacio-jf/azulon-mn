@@ -1,6 +1,9 @@
+import copy
+
 from typing import Optional, Dict, List
 from src.domain.board import Board
 from src.domain.move import Move
+from src.domain.move_generator import MoveGenerator
 from src.domain.team import Team
 
 class Game:
@@ -8,6 +11,7 @@ class Game:
     def __init__(self, board: Board):
         """Manages the overall game state, including the board, current turn, and scores."""
         self._board = board
+        self._move_generator = MoveGenerator(board)
         self._current_turn: Team = Team.RED
         self._scores: Dict[Team, int] = {Team.RED: 0, Team.BLUE: 0}
         self._selected_row: Optional[int] = None
@@ -40,6 +44,19 @@ class Game:
         """Clears the currently selected piece."""
         self._selected_row = None
         self._selected_col = None
+
+    def set_current_turn(self, team: Team) -> None:
+        """Sets the current player's turn."""
+        self._current_turn = team
+
+    def set_scores(self, scores: Dict[Team, int]) -> None:
+        """Sets the current scores for both teams."""
+        self._scores = scores
+
+    def set_selected_piece(self, row: int, col: int) -> None:
+        """Sets the currently selected piece to the specified position."""
+        self._selected_row = row
+        self._selected_col = col
 
     def current_turn(self) -> Team:
         """Returns the team whose turn it currently is."""
@@ -95,29 +112,6 @@ class Game:
 
         return False
 
-    def get_valid_moves(self, row: int, col: int) -> List[Move]:
-        """Returns valid moves for a piece (simple moves + single captures)."""
-        piece = self._board.get_piece(row, col)
-        if piece.is_empty or piece.team is None:
-            return []
-
-        moves: List[Move] = []
-
-        directions = [(-1, -1), (-1, 1)] if piece.team == Team.RED else [(1, -1), (1, 1)]
-
-        for dr, dc in directions:
-            nr, nc = row + dr, col + dc
-            if self._board.in_bounds(nr, nc) and self._board.get_piece(nr, nc).is_empty:
-                moves.append(Move(row, col, nr, nc, []))
-
-        capture_moves = self._get_capture_moves(row, col)
-
-        if capture_moves:
-            return capture_moves
-
-        moves.extend(capture_moves)
-        return moves
-
     def get_winner(self) -> Optional[Team]:
         """Determines the winner of the game based on scores if one team has no pieces left."""
         if not self._has_team_no_pieces():
@@ -132,6 +126,11 @@ class Game:
             return Team.BLUE
 
         return None
+
+    def apply_move(self, move: Move) -> None:
+        """Applies the given move to the game state, updating the board and scores accordingly."""
+        self._apply_move(move)
+        self.switch_turn()
 
     def _apply_move(self, move: Move) -> None:
         """Applies the given move to the board, updating piece positions and scores."""
@@ -213,6 +212,14 @@ class Game:
                     blue += 1
 
         return red == 0 or blue == 0
+
+    def get_valid_moves(self, row, col):
+        """Returns valid moves for the piece at the given location."""
+        return self._move_generator.get_valid_moves(row, col)
+
+    def get_all_moves(self, team):
+        """Returns all valid moves for the given team."""
+        return self._move_generator.get_all_moves(team)
 
 
 
