@@ -1,5 +1,3 @@
-import copy
-
 from typing import Optional, Dict, List
 from src.domain.board import Board
 from src.domain.move import Move
@@ -8,10 +6,10 @@ from src.domain.team import Team
 
 class Game:
     """Manages the overall game state, including the board, current turn, and scores."""
-    def __init__(self, board: Board):
+    def __init__(self, board: Board, move_generator: MoveGenerator):
         """Manages the overall game state, including the board, current turn, and scores."""
         self._board = board
-        self._move_generator = MoveGenerator(board)
+        self._move_generator = move_generator
         self._current_turn: Team = Team.RED
         self._scores: Dict[Team, int] = {Team.RED: 0, Team.BLUE: 0}
         self._selected_row: Optional[int] = None
@@ -213,11 +211,11 @@ class Game:
 
         return red == 0 or blue == 0
 
-    def get_valid_moves(self, row, col):
+    def get_valid_moves(self, row: int, col: int) -> List[Move]:
         """Returns valid moves for the piece at the given location."""
         return self._move_generator.get_valid_moves(row, col)
 
-    def get_all_moves(self, team):
+    def get_all_moves(self, team: Team) -> List[Move]:
         """Returns all valid moves for the given team."""
         return self._move_generator.get_all_moves(team)
 

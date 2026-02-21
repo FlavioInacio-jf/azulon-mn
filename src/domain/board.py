@@ -2,7 +2,6 @@ import copy
 
 from src.domain.element import Element
 from src.domain.piece import Piece
-from src.domain.piece_factory import PieceFactory
 from src.domain.team import Team
 
 
@@ -17,8 +16,8 @@ class Board:
     def initialize(self):
         """Populate board with starting pieces."""
 
-        red = PieceFactory.create_team_set(Team.RED)
-        blue = PieceFactory.create_team_set(Team.BLUE)
+        red = Piece.create_team_set(Team.RED)
+        blue = Piece.create_team_set(Team.BLUE)
 
         pos_blue = [(0,1),(0,3),(0,5),(1,0),(1,2),(1,4)]
         pos_red  = [(4,1),(4,3),(4,5),(5,0),(5,2),(5,4)]

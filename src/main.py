@@ -4,6 +4,7 @@ import tkinter as tk
 
 from src.domain.board import Board
 from src.domain.game import Game
+from src.domain.move_generator import MoveGenerator
 from src.game.game_renderer import GameRenderer
 
 if __name__ == "__main__":
@@ -13,7 +14,7 @@ if __name__ == "__main__":
 
     # Initialize the game state
     board = Board(6) # Initialize a 6x6 board
-    game = Game(board)
+    game = Game(board, MoveGenerator(board)) # Create the game instance with the board and move generator
     game.initialize() # Set up the initial game state
 
     # Create the game renderer and start the main loop
