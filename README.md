@@ -54,12 +54,8 @@ The project is organized by responsibility to keep rules, UI theme, and gameplay
   - `assets/svg/`
 
 ## Project images
-Add screenshots and other images to `assets/` and reference them in the README:
-
-```md
-![Main menu](assets/screenshots/main-menu.png)
-![Gameplay](assets/screenshots/ia-wins.png)
-```
+![Main menu](./assets/screenshots/main-menu.png)
+![Gameplay](./assets/screenshots/ia-wins.png)
 
 ## Requirements
 - **Python 3.09+** (recommended)
