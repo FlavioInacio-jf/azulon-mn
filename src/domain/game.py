@@ -30,7 +30,7 @@ class Game:
 
     def get_weighted_score(self, team: Team) -> int:
         """Returns the weighted score for the given team, which is the sum of the values of captured pieces."""
-        return self._scores.get(team, 0)
+        return self._scores.get(team, 0) + self._get_board_weight(team)
 
     def move_generator(self):
         """Returns the move generator for this game."""
@@ -152,6 +152,16 @@ class Game:
             self._board.remove_piece(r, c)
 
         self._board.set_piece(move.end_row, move.end_col, piece)
+
+    def _get_board_weight(self, team: Team) -> int:
+        """Returns the total weight of pieces currently on the board for the given team."""
+        total = 0
+        for r in range(self._board.size):
+            for c in range(self._board.size):
+                piece = self._board.get_piece(r, c)
+                if not piece.is_empty and piece.team == team:
+                    total += piece.weight
+        return total
 
     def _get_capture_moves(self, row: int, col: int) -> List[Move]:
         """Returns only single-step capture moves (no recursion)."""
