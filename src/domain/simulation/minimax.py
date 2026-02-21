@@ -17,7 +17,7 @@ def minimax(game: Game, depth: int, maximizing: bool, team: Team):
         return evaluate(game, team), None
 
     current_team = team if maximizing else team.opponent()
-    moves = game.get_valid_moves(current_team)
+    moves = game.get_all_moves(current_team)
 
     if not moves:
         return evaluate(game, team), None

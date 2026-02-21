@@ -4,6 +4,7 @@ from src.domain.team import Team
 from src.game.board_renderer import BoardRenderer
 from src.domain.game import Game
 from src.theme.theme_manager import ThemeManager
+from src.domain.simulation.minimax_agent import MinimaxAgent
 
 class GameRenderer:
     """Manages the main game window, rendering the board and handling user interactions."""
@@ -70,6 +71,9 @@ class GameRenderer:
 
         self._redraw_all()
 
+        # ⭐ agenda turno da IA
+        self._canvas.after(200, self._handle_ai_turn)
+
     def draw_scores(self):
         """Draws the current scores for both teams on the canvas."""
         self._canvas.delete("score")
@@ -130,3 +134,18 @@ class GameRenderer:
         winner = self._game.get_winner()
         if winner:
             self._show_game_over(winner)
+
+    def _handle_ai_turn(self):
+        """Handles the AI's turn by calculating and applying a move."""
+        if self._game.is_game_over():
+            return
+
+        if self._game.current_turn() == Team.BLUE:  # AI
+            agent = MinimaxAgent(depth=3)
+            move = agent.choose_move(self._game, Team.BLUE)
+
+            if move:
+                self._game.apply_move(move)
+                self.board_renderer.move_piece(self._game.board, move)
+
+            self._redraw_all()

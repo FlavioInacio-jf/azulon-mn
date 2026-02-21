@@ -5,3 +5,8 @@ class Team(Enum):
     NONE = auto()
     RED = auto()
     BLUE = auto()
+
+    def opponent(self):
+        """Returns the opposing team."""
+        return Team.BLUE if self == Team.RED else Team.RED
+

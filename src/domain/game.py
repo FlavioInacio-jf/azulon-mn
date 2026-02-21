@@ -28,6 +28,14 @@ class Game:
         """Returns the current state of the game board."""
         return self._board
 
+    def get_weighted_score(self, team: Team) -> int:
+        """Returns the weighted score for the given team, which is the sum of the values of captured pieces."""
+        return self._scores.get(team, 0)
+
+    def move_generator(self):
+        """Returns the move generator for this game."""
+        return self._move_generator
+
     def selected_piece(self) -> Optional[tuple[int, int]]:
         """Returns the position of the currently selected piece, or None if no piece is selected."""
         if self._selected_row is not None and self._selected_col is not None:
