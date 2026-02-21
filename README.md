@@ -58,7 +58,7 @@ Add screenshots and other images to `assets/` and reference them in the README:
 
 ```md
 ![Main menu](assets/screenshots/main-menu.png)
-![Gameplay](assets/screenshots/gameplay.png)
+![Gameplay](assets/screenshots/ia-wins.png)
 ```
 
 ## Requirements
