@@ -20,6 +20,7 @@ if __name__ == "__main__":
     earth_weight = cfg.get_env_var("EARTH_WEIGHT", 0.25)
     fire_weight = cfg.get_env_var("FIRE_WEIGHT", 0.25)
     air_weight = cfg.get_env_var("AIR_WEIGHT", 0.25)
+    minimax_depth = cfg.get_env_var("MINIMAX_DEPTH", 3)
     empty_weight = cfg.get_env_var("EMPTY_WEIGHT", 0.0)
 
     game_config = GameConfig(
@@ -28,7 +29,7 @@ if __name__ == "__main__":
         fire_weight=float(fire_weight),
         air_weight=float(air_weight),
         empty_weight=float(empty_weight),
-        minimax_depth=int(cfg.get_env_var("MINIMAX_DEPTH", 3))
+        minimax_depth=int(minimax_depth)
     )
 
     SQUARE_SIZE = 80 # Size of each square on the board
