@@ -11,5 +11,7 @@ class MinimaxAgent:
 
     def choose_move(self, game: Game, team: Team):
         """Chooses the best move for the given game state and team using the minimax algorithm."""
-        _, move = minimax(game, self.depth, True, team)
+        print(f"MinimaxAgent: Choosing move for team {team} with depth {self.depth}")
+        value, move = minimax(game, self.depth, True, team)
+        print(f"MinimaxAgent: Evaluated move {move} with score {value}")
         return move

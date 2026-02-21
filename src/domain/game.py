@@ -1,15 +1,17 @@
 from typing import Optional, Dict, List
 from src.domain.board import Board
+from src.domain.game_config import GameConfig
 from src.domain.move import Move
 from src.domain.move_generator import MoveGenerator
 from src.domain.team import Team
 
 class Game:
     """Manages the overall game state, including the board, current turn, and scores."""
-    def __init__(self, board: Board, move_generator: MoveGenerator):
+    def __init__(self, board: Board, move_generator: MoveGenerator, game_config: GameConfig) -> None:
         """Manages the overall game state, including the board, current turn, and scores."""
         self._board = board
         self._move_generator = move_generator
+        self._game_config = game_config
         self._current_turn: Team = Team.RED
         self._scores: Dict[Team, int] = {Team.RED: 0, Team.BLUE: 0}
         self._selected_row: Optional[int] = None
@@ -31,6 +33,10 @@ class Game:
     def get_weighted_score(self, team: Team) -> int:
         """Returns the weighted score for the given team, which is the sum of the values of captured pieces."""
         return self._scores.get(team, 0) + self._get_board_weight(team)
+
+    def get_game_config(self) -> GameConfig:
+        """Returns the game configuration, which includes element weights."""
+        return self._game_config
 
     def move_generator(self):
         """Returns the move generator for this game."""
@@ -148,7 +154,7 @@ class Game:
 
         for r, c in move.captured:
             captured_piece = self._board.get_piece(r, c)
-            self._scores[piece.team] += captured_piece.weight
+            self._scores[piece.team] += captured_piece.weight(self._game_config)
             self._board.remove_piece(r, c)
 
         self._board.set_piece(move.end_row, move.end_col, piece)
@@ -160,7 +166,7 @@ class Game:
             for c in range(self._board.size):
                 piece = self._board.get_piece(r, c)
                 if not piece.is_empty and piece.team == team:
-                    total += piece.weight
+                    total += piece.weight(self._game_config)
         return total
 
     def _get_capture_moves(self, row: int, col: int) -> List[Move]:

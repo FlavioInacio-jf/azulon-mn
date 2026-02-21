@@ -2,15 +2,8 @@ from dataclasses import dataclass
 import random
 from typing import Optional
 from src.domain.element import Element
+from src.domain.game_config import GameConfig
 from src.domain.team import Team
-
-ELEMENT_WEIGHTS = {
-    Element.FIRE: 3,
-    Element.WATER: 2,
-    Element.EARTH: 1,
-    Element.AIR: 1,
-    Element.EMPTY: 0
-}
 
 @dataclass
 class Piece:
@@ -23,10 +16,9 @@ class Piece:
         """Checks if the piece is empty (no element)."""
         return self.element == Element.EMPTY
 
-    @property
-    def weight(self) -> int:
+    def weight(self, game_config: GameConfig) -> int:
         """Returns the weight of the piece based on its elemental type."""
-        return ELEMENT_WEIGHTS.get(self.element, 0)
+        return Element.get_weight(self.element, game_config)
 
     @classmethod
     def create_team_set(cls, team: Team) -> list['Piece']:

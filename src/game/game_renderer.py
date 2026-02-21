@@ -141,7 +141,7 @@ class GameRenderer:
             return
 
         if self._game.current_turn() == Team.BLUE:  # AI
-            agent = MinimaxAgent(depth=3)
+            agent = MinimaxAgent(depth=self._game.get_game_config().minimax_depth)
             move = agent.choose_move(self._game, Team.BLUE)
 
             if move:

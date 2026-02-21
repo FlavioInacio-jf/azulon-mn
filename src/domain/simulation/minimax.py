@@ -1,6 +1,8 @@
 import math
+from typing import Optional
 
 from src.domain.game import Game
+from src.domain.move import Move
 from src.domain.simulation.game_cloner import GameCloner
 from src.domain.team import Team
 
@@ -9,7 +11,7 @@ def evaluate(game: Game, team: Team):
     return game.get_weighted_score(team) - game.get_weighted_score(team.opponent())
 
 
-def minimax(game: Game, depth: int, maximizing: bool, team: Team):
+def minimax(game: Game, depth: int, maximizing: bool, team: Team) -> tuple[float,  Optional[Move]]:
     """Minimax algorithm to determine the best move for a given game state."""
     gamer_cloner = GameCloner()
 

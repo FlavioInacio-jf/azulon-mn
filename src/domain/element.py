@@ -1,5 +1,7 @@
 from enum import Enum
 
+from src.domain.game_config import GameConfig
+
 class Element(Enum):
     """Enumeration of game elements with associated weights (pontos)."""
     EMPTY = 0
@@ -9,14 +11,14 @@ class Element(Enum):
     AIR = 4
 
     @classmethod
-    def get_weight(cls, element: "Element") -> int:
+    def get_weight(cls, element: "Element", game_config: GameConfig) -> int:
         """Return the weight (pontos) of a given element."""
         weights = {
-            cls.EMPTY: 0,
-            cls.FIRE: 3,
-            cls.WATER: 2,
-            cls.EARTH: 1,
-            cls.AIR: 1
+            cls.EMPTY: game_config.empty_weight,
+            cls.FIRE: game_config.fire_weight,
+            cls.WATER: game_config.water_weight,
+            cls.EARTH: game_config.earth_weight,
+            cls.AIR: game_config.air_weight
         }
         return weights.get(element, 0)
 
