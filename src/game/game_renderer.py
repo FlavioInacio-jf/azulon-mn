@@ -71,7 +71,6 @@ class GameRenderer:
 
         self._redraw_all()
 
-        # ⭐ agenda turno da IA
         self._canvas.after(200, self._handle_ai_turn)
 
     def draw_scores(self):
@@ -134,6 +133,7 @@ class GameRenderer:
         winner = self._game.get_winner()
         if winner:
             self._show_game_over(winner)
+
 
     def _handle_ai_turn(self):
         """Handles the AI's turn by calculating and applying a move."""

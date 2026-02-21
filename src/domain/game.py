@@ -126,7 +126,7 @@ class Game:
 
     def get_winner(self) -> Optional[Team]:
         """Determines the winner of the game based on scores if one team has no pieces left."""
-        if not self._has_team_no_pieces():
+        if not self.is_game_over():
             return None
 
         red_score = self._scores.get(Team.RED, 0)
