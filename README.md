@@ -110,6 +110,7 @@ cp .env.example .env
 - `EARTH_WEIGHT`
 - `FIRE_WEIGHT`
 - `AIR_WEIGHT`
+- `MINIMAX_DEPTH`
 
 Higher values mean that element is considered more valuable by the evaluation heuristic used in Minimax.
 
